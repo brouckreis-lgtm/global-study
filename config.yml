@@ -1,0 +1,62 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "static/images"
+public_folder: "/images"
+
+collections:
+  - name: "pages"
+    label: "Pages"
+    files:
+      - label: "Page d'accueil"
+        name: "home"
+        file: "content/_index.md"
+        fields:
+          - {label: "Titre", name: "title", widget: "string"}
+          - {label: "Image d'accueil", name: "hero_image", widget: "image"}
+          - {label: "Contenu", name: "body", widget: "markdown"}
+      - label: "Page Paiement"
+        name: "paiement"
+        file: "content/paiement.md"
+        fields:
+          - {label: "Titre", name: "title", widget: "string"}
+          - {label: "Contenu HTML", name: "body", widget: "markdown"}
+
+  - name: "pays"
+    label: "Fiches Pays"
+    folder: "content/pays"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titre", name: "title", widget: "string"}
+      - {label: "Pays", name: "country", widget: "string"}
+      - {label: "Drapeau", name: "flag", widget: "string"}
+      - {label: "Lien officiel visa", name: "visa_link", widget: "string"}
+      - {label: "Priorite", name: "priority", widget: "number", default: 2}
+      - {label: "Contenu", name: "body", widget: "markdown"}
+
+  - name: "langues"
+    label: "Ressources Langues"
+    folder: "content/langues"
+    create: true
+    fields:
+      - {label: "Titre", name: "title", widget: "string"}
+      - {label: "Langue", name: "language", widget: "string"}
+      - {label: "Drapeau", name: "flag", widget: "string"}
+      - {label: "Contenu", name: "body", widget: "markdown"}
+
+  - name: "bourses_manuelles"
+    label: "Bourses (ajout manuel)"
+    folder: "content/bourses/manuelles"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Titre", name: "title", widget: "string"}
+      - {label: "Pays", name: "pays", widget: "string"}
+      - {label: "Date limite", name: "deadline", widget: "string"}
+      - {label: "Organisme", name: "organisme", widget: "string"}
+      - {label: "Montant", name: "montant", widget: "string"}
+      - {label: "Niveau", name: "niveau", widget: "string", default: "Master"}
+      - {label: "Lien officiel", name: "lien", widget: "string"}
+      - {label: "Description", name: "body", widget: "markdown"}

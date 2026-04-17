@@ -1,0 +1,37 @@
+{{ define "main" }}
+<article class="bourse-single">
+  <div class="bourse-header">
+    <h1>{{ .Title }}</h1>
+    <div class="bourse-tags">
+      <span class="tag pays">{{ .Params.pays }}</span>
+      <span class="tag niveau">{{ .Params.niveau }}</span>
+    </div>
+  </div>
+  <div class="bourse-infos">
+    <div class="info-item"><strong>Organisme :</strong> {{ .Params.organisme }}</div>
+    <div class="info-item"><strong>Montant :</strong> {{ .Params.montant }}</div>
+    <div class="info-item"><strong>Date limite :</strong> {{ if .Params.deadline }}{{ dateFormat "02 January 2006" .Params.deadline }}{{ else }}Non specifiee{{ end }}</div>
+    <div class="info-item"><strong>Niveau :</strong> {{ .Params.niveau }}</div>
+  </div>
+  <div class="bourse-content">{{ .Content }}</div>
+  <div class="bourse-action">
+    <a href="{{ .Params.lien }}" class="btn-postuler" target="_blank" rel="noopener">Postuler maintenant</a>
+    <p class="disclaimer">* Vous serez redirige vers le site officiel.</p>
+  </div>
+  <div class="bourse-navigation">
+    <a href="{{ .Site.BaseURL }}bourses/">Retour a la liste des bourses</a>
+  </div>
+</article>
+<style>
+.bourse-single { max-width: 800px; margin: 2rem auto; padding: 0 1.5rem; color: #e0e0e0; }
+.bourse-header h1 { font-size: 2.2rem; color: white; }
+.bourse-tags { display: flex; gap: 0.8rem; margin: 1rem 0; }
+.tag { background: #1e2a3a; padding: 0.4rem 1rem; border-radius: 30px; color: #a0c4ff; }
+.bourse-infos { background: #151e2f; border-radius: 16px; padding: 1.8rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 2rem; }
+.info-item { display: flex; align-items: center; gap: 0.5rem; }
+.bourse-content { background: #151e2f; border-radius: 16px; padding: 2rem; margin-bottom: 2rem; line-height: 1.7; }
+.btn-postuler { display: inline-block; background: #3b82f6; color: white; padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; font-weight: bold; }
+.bourse-navigation a { color: #a0c4ff; }
+@media (max-width: 600px) { .bourse-infos { grid-template-columns: 1fr; } }
+</style>
+{{ end }}

@@ -1,0 +1,114 @@
+{{ define "main" }}
+<div class="bourses-container">
+  <div class="bourses-header">
+    <h1>{{ .Title }}</h1>
+    <p class="description">{{ .Params.description }}</p>
+    {{ .Content }}
+  </div>
+  <div class="filtres">
+    <div class="filtre-group">
+      <label for="filtre-pays">Pays :</label>
+      <select id="filtre-pays">
+        <option value="all">Tous les pays</option>
+        {{ $paysList := slice }}
+        {{ range where .Site.RegularPages "Type" "bourse" }}
+          {{ if .Params.pays }}{{ $paysList = $paysList | append .Params.pays }}{{ end }}
+        {{ end }}
+        {{ range $paysList | uniq | sort }}
+          <option value="{{ . | urlize }}">{{ . }}</option>
+        {{ end }}
+      </select>
+    </div>
+    <div class="filtre-group">
+      <label for="filtre-niveau">Niveau :</label>
+      <select id="filtre-niveau">
+        <option value="all">Tous les niveaux</option>
+        {{ $niveauxList := slice }}
+        {{ range where .Site.RegularPages "Type" "bourse" }}
+          {{ if .Params.niveau }}{{ $niveauxList = $niveauxList | append .Params.niveau }}{{ end }}
+        {{ end }}
+        {{ range $niveauxList | uniq | sort }}
+          <option value="{{ . | urlize }}">{{ . }}</option>
+        {{ end }}
+      </select>
+    </div>
+    <button id="reset-filtres" class="btn-reset">Reinitialiser</button>
+  </div>
+  <p id="resultats-count"></p>
+  <div class="bourses-grid" id="bourses-grid">
+    {{ $bourses := where .Site.RegularPages "Type" "bourse" }}
+    {{ range $bourses.ByDate.Reverse }}
+      <div class="bourse-card"
+           data-pays="{{ .Params.pays | urlize }}"
+           data-niveau="{{ .Params.niveau | urlize }}"
+           data-deadline="{{ .Params.deadline }}">
+        <div class="bourse-card-header">
+          <span class="bourse-pays">{{ .Params.pays }}</span>
+          <span class="bourse-niveau">{{ .Params.niveau }}</span>
+        </div>
+        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        <div class="bourse-meta">
+          <p><strong>Organisme :</strong> {{ .Params.organisme }}</p>
+          <p><strong>Montant :</strong> {{ .Params.montant }}</p>
+          <p><strong>Deadline :</strong>
+            {{ if .Params.deadline }}
+              {{ $deadline := time.AsTime .Params.deadline }}
+              {{ $deadline.Format "02 January 2006" }}
+            {{ else }}Non specifiee{{ end }}
+          </p>
+        </div>
+        <a href="{{ .RelPermalink }}" class="btn-details">Voir les details</a>
+      </div>
+    {{ end }}
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var selectPays = document.getElementById('filtre-pays');
+  var selectNiveau = document.getElementById('filtre-niveau');
+  var resetBtn = document.getElementById('reset-filtres');
+  var cards = document.querySelectorAll('.bourse-card');
+  var compteur = document.getElementById('resultats-count');
+  function updateCount() {
+    var visible = document.querySelectorAll('.bourse-card:not([style*="display: none"])');
+    compteur.textContent = visible.length + ' bourse(s) trouvee(s)';
+  }
+  function filterCards() {
+    var paysFiltre = selectPays.value;
+    var niveauFiltre = selectNiveau.value;
+    cards.forEach(function(card) {
+      var paysMatch = paysFiltre === 'all' || card.getAttribute('data-pays') === paysFiltre;
+      var niveauMatch = niveauFiltre === 'all' || card.getAttribute('data-niveau') === niveauFiltre;
+      card.style.display = (paysMatch && niveauMatch) ? '' : 'none';
+    });
+    updateCount();
+  }
+  selectPays.addEventListener('change', filterCards);
+  selectNiveau.addEventListener('change', filterCards);
+  resetBtn.addEventListener('click', function() { selectPays.value='all'; selectNiveau.value='all'; filterCards(); });
+  updateCount();
+});
+</script>
+<style>
+.bourses-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; color: #e0e0e0; }
+.bourses-header h1 { font-size: 2.5rem; color: white; }
+.description { font-size: 1.2rem; color: #a0c4ff; }
+.filtres { display: flex; flex-wrap: wrap; gap: 1.5rem; align-items: flex-end; background: #151e2f; padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; border: 1px solid #2e3f5a; }
+.filtre-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.filtre-group label { font-weight: bold; color: #a0c4ff; }
+.filtre-group select { padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid #3b4a62; background: #0a0f1e; color: white; font-size: 1rem; min-width: 200px; }
+.btn-reset { background: #2e3f5a; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: auto; }
+.btn-reset:hover { background: #3b4a62; }
+#resultats-count { margin-bottom: 1rem; color: #9ca3af; }
+.bourses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.8rem; }
+.bourse-card { background: #151e2f; border-radius: 16px; padding: 1.5rem; border: 1px solid #2e3f5a; transition: transform 0.2s; }
+.bourse-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); border-color: #3b82f6; }
+.bourse-card-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.bourse-pays, .bourse-niveau { background: #1e2a3a; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; color: #a0c4ff; }
+.bourse-card h3 { margin: 0 0 1rem 0; }
+.bourse-card h3 a { color: white; text-decoration: none; }
+.bourse-meta { margin-bottom: 1.5rem; color: #b0c4de; }
+.btn-details { display: inline-block; background: #3b82f6; color: white; padding: 0.6rem 1.2rem; border-radius: 30px; text-decoration: none; font-weight: bold; }
+@media (max-width: 768px) { .filtres { flex-direction: column; } .bourses-grid { grid-template-columns: 1fr; } }
+</style>
+{{ end }}

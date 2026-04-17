@@ -1,0 +1,11 @@
+{
+  "name": "global-study",
+  "version": "1.0.0",
+  "description": "Plateforme de bourses et mobilité internationale",
+  "scripts": {
+    "update-bourses": "node scripts/fetch-scholarships.js"
+  },
+  "dependencies": {
+    "apify-client": "^2.9.0"
+  }
+}
