@@ -1,23 +1,12 @@
 baseURL = "https://votresite.netlify.app/"
 languageCode = "fr-fr"
 title = "Global Study"
-theme = "hugo-book"
 
 [params]
   description = "Bourses, visas et emplois pour la jeunesse africaine"
   contact_email = "contacts.globalstudy@gmail.com"
   admin_name = "Luckman10"
   whatsapp = "+33753883652"
-
-[languages]
-  [languages.fr]
-    languageName = "Français"
-    weight = 1
-    contentDir = "content"
-  [languages.en]
-    languageName = "English"
-    weight = 2
-    contentDir = "content/en"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
